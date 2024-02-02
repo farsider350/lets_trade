@@ -16,7 +16,7 @@ apiConfigs.forEach(config => {
   };
 
   // Get markets - Working
-  makeApiRequest(...currentConfig)
+  makeApiRequest({ ...currentConfig, apiUrl: apiUrls.markets })
     .then(response => {
       if (!response.error) {
         console.log(response);

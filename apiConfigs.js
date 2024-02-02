@@ -6,8 +6,8 @@ module.exports = [
     apiUrl: apiUrls.balances,
   },
   {
-    apiName: 'Example',
-    apiUrl: apiUrls.example,
+    apiName: 'Markets',
+    apiUrl: apiUrls.markets,
   },
   // Add more API configurations as needed
 ];
