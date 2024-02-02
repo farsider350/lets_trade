@@ -1,0 +1,16 @@
+{
+    "name": "lets_trade",
+    "author": "farsider350",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "license": "ISC",
+    "dependencies": {
+      "axios": "",
+      "crypto": "^1.0.1",
+      "request": "^2.86.0"
+    }
+  }
