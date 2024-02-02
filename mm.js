@@ -6,15 +6,17 @@ const apiUrls = require('./apiUrls');
 const apiKey = 'your_api_key';
 const secret = 'your_secret';
 
-// Merge the autradexConfig with the global apiKey and secret
-const mergedConfig = {
-  ...autradexConfig,
-  apiKey,
-  secret,
-};
+// Iterate over the API configurations and make requests
+apiConfigs.forEach(config => {
+    // Merge the current config with the global apiKey and secret
+    const currentConfig = {
+      ...config,
+      apiKey,
+      secret,
+    };
 
 // Get markets - Working
- makeApiRequest(mergedConfig)
+ makeApiRequest(...currentConfig)
   .then(response => {
     if (!response.error) {
       console.log(response);
@@ -37,7 +39,7 @@ setInterval(function () {
 
   // Close all orders - ToDo
 
-  makeApiRequest({ ...mergedConfig, apiUrl: apiUrls.clearAllOrders })
+  makeApiRequest({ ...currentConfig, apiUrl: apiUrls.clearAllOrders })
     .then(res => {
       if (!res.error) {
         if (Array.isArray(res)) {
@@ -49,7 +51,7 @@ setInterval(function () {
           console.error('Unexpected response format. Expected an array.');
         }
 
-        makeApiRequest({ ...mergedConfig, apiUrl: `your_order_book_api_url/${theMarket}` })
+        makeApiRequest({ ...currentConfig, apiUrl: `your_order_book_api_url/${theMarket}` })
           .then(res => {
             if (!res.error) {
               // get spread
@@ -71,7 +73,7 @@ setInterval(function () {
               var oursSell = false;
               var oursBuy = false;
 
-              makeApiRequest({ ...mergedConfig, apiUrl: `your_orders_api_url/${theMarket}` })
+              makeApiRequest({ ...currentConfig, apiUrl: `your_orders_api_url/${theMarket}` })
                 .then(res => {
                   if (!res.error) {
                     res.forEach(function (order) {
@@ -94,11 +96,11 @@ setInterval(function () {
                       console.log("Buy Price: " + buyPrice);
                       console.log("Sell Price: " + sellPrice);
 
-                      makeApiRequest({ ...mergedConfig, apiUrl: 'your_create_order_api_url', method: 'POST', data: { market: theMarket, side: 'buy', volume: volume, price: buyPrice } })
+                      makeApiRequest({ ...currentConfig, apiUrl: 'your_create_order_api_url', method: 'POST', data: { market: theMarket, side: 'buy', volume: volume, price: buyPrice } })
                         .then(res => {
                           if (!res.error) {
                             // sell
-                            makeApiRequest({ ...mergedConfig, apiUrl: 'your_create_order_api_url', method: 'POST', data: { market: theMarket, side: 'sell', volume: volume, price: sellPrice } })
+                            makeApiRequest({ ...currentConfig, apiUrl: 'your_create_order_api_url', method: 'POST', data: { market: theMarket, side: 'sell', volume: volume, price: sellPrice } })
                               .then(res2 => {
                                 if (!res.error) {
                                   console.log(res.id + "|" + res.state + "|" + res.side);
