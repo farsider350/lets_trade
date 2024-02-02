@@ -18,6 +18,10 @@ apiConfigs.forEach(config => {
     secret,
   };
 
+  // BOT TEST
+  setInterval(function () {
+    console.log("_________________________________________________________");
+
   let oursSell = false;
   let oursBuy = false;
 
@@ -132,4 +136,5 @@ const buyOrderData = { price: '0.00000201', side: 'buy', ord_type: 'limit', mark
       // Handle errors here
       console.error("Error making API request:", error);
     });
+  }, 1 * 10 * 1000); // 1 Minute
 });
