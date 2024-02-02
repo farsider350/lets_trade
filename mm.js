@@ -19,7 +19,7 @@ apiConfigs.forEach(config => {
   makeApiRequest({ ...currentConfig, apiUrl: apiUrls.markets })
     .then(response => {
       if (!response.error) {
-        console.log(response);
+        console.log(response.data);
       } else {
         console.log(response);
       }
@@ -134,6 +134,6 @@ apiConfigs.forEach(config => {
         }
       });
 
-  }, 30 * 60 * 1000); // 60 * 1000 milsec (added missing multiplication by 1000)
+  }, 1 * 60 * 1000); // 1 Minute
 
-}); // Close the forEach loop for apiConfigs
+});
