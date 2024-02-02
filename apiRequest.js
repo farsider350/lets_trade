@@ -1,10 +1,10 @@
 const axios = require('axios');
 const crypto = require('crypto');
 
-const apiKey = '';
-const secret = '';
-
 function makeApiRequest(apiConfig) {
+
+  const apiKey = apiConfig.apiKey;
+  const secret = apiConfig.secret;
   // Get current timestamp in milliseconds
   function getCurrentTimestamp() {
     return new Date().getTime();
