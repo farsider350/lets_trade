@@ -3,8 +3,8 @@ const apiConfigs = require('./apiConfigs');
 const apiUrls = require('./apiUrls');
 
 // Set your actual API key and secret
-const apiKey = 'your_api_key';
-const secret = 'your_secret';
+const apiKey = '';
+const secret = '';
 
 // Iterate over the API configurations and make requests
 apiConfigs.forEach(config => {
@@ -16,31 +16,32 @@ apiConfigs.forEach(config => {
   };
 
   // Get markets - Working
-  makeApiRequest({ ...currentConfig, apiUrl: apiUrls.markets })
+  makeApiRequest({ ...currentConfig, apiUrl: apiUrls.balances })
     .then(response => {
       if (!response.error) {
         console.log(response.data);
       } else {
-        console.log(response);
+        console.log(response.error);
       }
     })
     .catch(error => {
       console.error(error);
     });
 
-  // BOT TEST - Working
+  // BOT TEST
   setInterval(function () {
     console.log("_________________________________________________________");
 
     // Options
-    var theMarket = "dogebtc";
+    var theMarket = "mtbcdoge";
     var increase = 0.000000001;
     var volume = 1;
 
-    // Close all orders - ToDo
+    // Close all orders
     makeApiRequest({ ...currentConfig, apiUrl: apiUrls.clearAllOrders })
       .then(res => {
         if (!res.error) {
+          console.log(res);
           if (Array.isArray(res)) {
             console.log("Removing old orders...");
             res.forEach(function (order) {
@@ -50,7 +51,7 @@ apiConfigs.forEach(config => {
             console.error('Unexpected response format. Expected an array.');
           }
 
-          makeApiRequest({ ...currentConfig, apiUrl: `your_order_book_api_url/${theMarket}` })
+          makeApiRequest({ ...currentConfig, apiUrl: apiUrls.markets/* + `/${theMarket}`*/ })
             .then(res => {
               if (!res.error) {
                 // get spread
@@ -134,6 +135,6 @@ apiConfigs.forEach(config => {
         }
       });
 
-  }, 1 * 60 * 1000); // 1 Minute
+  }, 1 * 10 * 1000); // 1 Minute
 
 });
