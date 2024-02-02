@@ -38,7 +38,7 @@ apiConfigs.forEach(config => {
     var volume = 1;
 
     // Close all orders
-    makeApiRequest({ ...currentConfig, apiUrl: apiUrls.clearAllOrders })
+/*    makeApiRequest({ ...currentConfig, apiUrl: apiUrls.clearAllOrders })
       .then(res => {
         if (!res.error) {
           console.log(res);
@@ -49,9 +49,9 @@ apiConfigs.forEach(config => {
             });
           } else {
             console.error('Unexpected response format. Expected an array.');
-          }
+          }*/
 
-          makeApiRequest({ ...currentConfig, apiUrl: apiUrls.markets/* + `/${theMarket}`*/ })
+          makeApiRequest({ ...currentConfig, apiUrl: apiUrls.getMarket })
             .then(res => {
               if (!res.error) {
                 // get spread
@@ -73,7 +73,7 @@ apiConfigs.forEach(config => {
                 var oursSell = false;
                 var oursBuy = false;
 
-                makeApiRequest({ ...currentConfig, apiUrl: `your_orders_api_url/${theMarket}` })
+                makeApiRequest({ ...currentConfig, apiUrl: apiUrls.getMarket })
                   .then(res => {
                     if (!res.error) {
                       res.forEach(function (order) {

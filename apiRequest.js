@@ -1,8 +1,8 @@
 const axios = require('axios');
 const crypto = require('crypto');
 
-const apiKey = 'your_api_key'; // Set your actual API key
-const secret = 'your_secret'; // Set your actual secret
+const apiKey = '';
+const secret = '';
 
 function makeApiRequest(apiConfig) {
   // Get current timestamp in milliseconds
@@ -22,13 +22,14 @@ function makeApiRequest(apiConfig) {
   const authSignature = digest;
 
   return axios({
-    method: 'GET',
+    method: apiConfig.method, // Use the method from apiConfig
     url: apiConfig.apiUrl,
     headers: {
       'X-Auth-Apikey': apiKey,
       'X-Auth-Nonce': currentTimestamp,
       'X-Auth-Signature': authSignature
-    }
+    },
+    data: apiConfig.data, // Use the data from apiConfig
   });
 }
 

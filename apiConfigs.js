@@ -21,5 +21,9 @@ module.exports = [
     apiName: 'Cancel All Orders',
     apiUrl: apiUrls.clearAllOrders,
   },
+  {
+    apiName: 'Create Order',
+    apiUrl: apiUrls.createOrder,
+  },
   // Add more API configurations as needed
 ];

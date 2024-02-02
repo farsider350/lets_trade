@@ -6,8 +6,6 @@ const apiUrls = require('./apiUrls');
 const apiKey = 'your_api_key';
 const secret = 'your_secret';
 
-//const apiUrlWithCurrency = apiUrls.getMarket.replace('this', 'dogebtc');
-//console.log(apiUrlWithCurrency);
 // Iterate over the API configurations and make requests
 apiConfigs.forEach(config => {
   // You can override apiKey and secret if needed for a specific config
@@ -18,11 +16,18 @@ apiConfigs.forEach(config => {
     secret,
   };
 
-  makeApiRequest({ ...currentConfig, apiUrl: apiUrlWithCurrency })
-    .then(response => {
-      console.log(`Response for ${currentConfig.apiName}:`, response.data);
+  // Create new buy order
+  const buyOrderData = { price: '0.00000201', volume: '1.2', side: 'buy', ord_type: 'limit', market: 'dogebtc' };
+
+  makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
+    .then(res => {
+      console.log("API Request Response:", res.data);
+
+      if (!res.error) {
+        console.log("Buy Order Created:", res.data + "|" + res.state + "|" + res.side);
+      }
     })
     .catch(error => {
-      console.error(`Error for ${currentConfig.apiName}:`, error.response ? error.response.data : error.message);
+      console.error("Error creating buy order:", error);
     });
 });
