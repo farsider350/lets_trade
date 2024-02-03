@@ -6,12 +6,12 @@ const apiUrls = require('./apiUrls');
 const apiKey = '';
 const secret = '';
 
-const increase = 0.00000001;
+const increase = 0.000001;
 
 // Iterate over the API configurations and make requests
 apiConfigs.forEach(config => {
   // You can override apiKey and secret if needed for a specific config
-  const apiUrlWithCurrency = apiUrls.getMarket.replace('this', 'dogebtc');
+  const apiUrlWithCurrency = apiUrls.getMarket.replace('this', 'mtbcdoge');
   const currentConfig = {
     ...config,
     apiKey,
@@ -19,6 +19,7 @@ apiConfigs.forEach(config => {
   };
 
   // BOT TEST
+    console.log("Market Maker Bot Live");
   setInterval(function () {
     console.log("_________________________________________________________");
 
@@ -27,7 +28,7 @@ apiConfigs.forEach(config => {
 
   makeApiRequest({ ...currentConfig, apiUrl: apiUrlWithCurrency })
     .then(res => {
-      console.log("API Response:", res.data);
+      // console.log("API Response:", res.data);
 
       if (res.data && res.data.asks && res.data.asks.length > 0) {
         // Find the first 'sell' ask
@@ -41,10 +42,10 @@ apiConfigs.forEach(config => {
           console.log("[Market Making]");
           console.log("Selling At: " + selling.toFixed(9));
           console.log("Buying At: " + buying.toFixed(9));
-          var spread = ((selling - increase) - (buying + increase)).toFixed(9);
+          var spread = (selling - buying).toFixed(9);
           console.log("Spread BTC: " + spread);
 
-          if (spread < 0.00000001) {
+          if (spread < 0.000003) {
             // not worth it, end
             console.log("Not worth it, spread is too low...");
             return;
@@ -54,36 +55,36 @@ apiConfigs.forEach(config => {
           makeApiRequest({ ...currentConfig, apiUrl: apiUrls.getMyOrders })
             .then(existingOrdersRes => {
               if (!existingOrdersRes.error) {
-                console.log("Existing Orders:", existingOrdersRes);
+                // console.log("Existing Orders:", existingOrdersRes);
 
                 // Assuming existing orders are in existingOrdersRes.data or a similar structure
                 const orders = existingOrdersRes.data; // Adjust if needed
 
                 // Check existing orders
                 orders.forEach(order => {
-                  console.log(order.price);
+                  // console.log(order.price);
                   if (order.price == selling) {
-                    oursSell = true;
+                    oursSell = false;
                   }
                   if (order.price == buying) {
-                    oursBuy = true;
+                    oursBuy = false;
                   }
                 });
 
                 var buyPrice = (buying + increase).toFixed(9);
                 var sellPrice = (selling - increase).toFixed(9);
 
-                if (oursBuy || oursSell) {
+                if (!oursBuy || !oursSell) {
                   console.log("Orders live are not ours, making new orders...");
 
-                  const buyOrderData = { price: buyPrice, volume: '1.3', side: 'buy', ord_type: 'limit', market: 'dogebtc' };
-                  const sellOrderData = { price: sellPrice, volume: '1.4', side: 'sell', ord_type: 'limit', market: 'dogebtc' };
+                  const buyOrderData = { price: buyPrice, volume: '3', side: 'buy', ord_type: 'limit', market: 'mtbcdoge' };
+                  const sellOrderData = { price: sellPrice, volume: '3', side: 'sell', ord_type: 'limit', market: 'mtbcdoge' };
                   // Create new sell order
                   makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
                     .then(res => {
-                      console.log("API Request Response:", res.data);
+                      // console.log("API Request Response:", res.data);
                       if (!res.error) {
-                        console.log("Sell Order Created:", res.data + "|" + res.state + "|" + res.side);
+                        console.log("Sell Order Created:", res.data);
                       }
                     })
                     .catch(error => {
@@ -94,28 +95,12 @@ apiConfigs.forEach(config => {
                   makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: sellOrderData })
                     .then(res => {
                       if (!res.error) {
-                        console.log("Buy Order Created:", res + "|" + res.state + "|" + res.side);
+                        console.log("Buy Order Created:", res.data);
                       }
                     })
                     .catch(error => {
                       console.error("Error creating buy order:", error);
                     });
-
-
-/*
-const buyOrderData = { price: '0.00000201', side: 'buy', ord_type: 'limit', market: 'dogebtc' };
-
-  makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
-    .then(res => {
-      console.log("API Request Response:", res.data);
-
-      if (!res.error) {
-        console.log("Buy Order Created:", res.data + "|" + res.state + "|" + res.side);
-      }
-    })
-    .catch(error => {
-      console.error("Error creating buy order:", error);
-    });*/
 
                 } else {
                   console.log("Our orders are already live, no need to create new orders.");
