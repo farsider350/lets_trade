@@ -1,4 +1,4 @@
-// Arb Bot
+// Arb Bot for Dgoe BTC - Autradex new API and Graviex Old API - Warning!!! Repeats buys 6 times
 const makeApiRequest = require('./apiRequest');
 const apiConfigs = require('./apiConfigs');
 const apiUrls = require('./apiUrls');
