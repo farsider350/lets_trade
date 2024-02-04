@@ -41,7 +41,7 @@ apiConfigs.forEach(config => {
   setInterval(function () {
     console.log("_________Beginning Arb Discovery for Doge vs Bitcoin_________");
     const theMarket = "dogebtc";
-    const increase = "0.000000001"; // The most allowed increase in overlap
+    // const increase = "0.000000001"; // The most allowed increase in overlap
     const volume = "33"; // The volume you wish to trade with
     // Check Autradex Orders
     makeApiRequest({ ...currentConfig, apiUrl: apiUrlWithCurrency })
@@ -85,18 +85,17 @@ apiConfigs.forEach(config => {
                     }
                   });*/
 
-              const buyPriceAutx = sellingGrav.toFixed(9);
-              const sellPriceAutx = buyingGrav.toFixed(9);
-              const buyPriceGrav = sellingAutx.toFixed(9);
-              const sellPriceGrav = buyingAutx.toFixed(9);
-              // If Autradex buy is greater than Graviex sell
-              if ((buyingAutx - increase) > sellingGrav) {
-                console.log("Orders Have Arb Opportunity");
+              const sellPriceAutx = sellingGrav.toFixed(9);
+              const buyPriceAutx = buyingGrav.toFixed(9);
+              // const buyPriceGrav = sellingAutx.toFixed(9);
+              // const sellPriceGrav = buyingAutx.toFixed(9);
 
-                // Buy From Graviex
-                graviex.createOrder(theMarket, "buy", volume, sellingGrav, function (res4) {
-                  if (!res4.error) {
-                    // Sell To Autradex
+
+              // Lets match the buying price at Autradex with Graviex
+              if (buyingAutx !== buyingGrav) {
+                console.log("Orders are not equal, adjusting");
+
+                    // Buy at Autradex
                     const buyOrderData = { price: buyPriceAutx, volume: volume, side: 'buy', ord_type: 'limit', market: 'dogebtc' };
                     makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
                       .then(res5 => {
@@ -108,32 +107,20 @@ apiConfigs.forEach(config => {
                           console.log(res5)
                         }
                       });
-                  } else {
-                    console.log(res4)
-                  }
-                });
               } else {
                 console.log("Autradex Buy Is Less Than Graviex Sell - Doing nothing on this side");
               }
 
-              // If Graviex buy is greater than Autradex sell
-              if ((buyingGrav - increase) > sellingAutx) {
-                console.log("Orders Have Arb Opportunity");
+              // Lets match the selling price at Autradex with Graviex
+              if (sellingGrav !== sellingAutx) {
+                console.log("Orders are not equal, adjusting");
 
-                // Buy From Autradex
-                const buyOrderData = { price: buyPriceGrav, volume: volume, side: 'buy', ord_type: 'limit', market: 'dogebtc' };
-                makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
+                // Sell at Autradex
+                const sellOrderData = { price: sellPriceAutx, volume: volume, side: 'sell', ord_type: 'limit', market: 'dogebtc' };
+                makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: sellOrderData })
                   .then(res6 => {
                     if (!res6.error) {
-                      // Sell To Graviex
-                      graviex.createOrder(theMarket, "sell", volume, buyingGrav, function (res7) {
-                        if (!res7.error) {
                           console.log(res6.id + "|" + res6.state + "|" + res6.side);
-                          console.log(res7.id + "|" + res7.state + "|" + res7.side);
-                        } else {
-                          console.log(res7)
-                        }
-                      });
                     } else {
                       console.log(res6)
                     }
