@@ -41,12 +41,11 @@ apiConfigs.forEach(config => {
   setInterval(function () {
     console.log("_________Beginning Market Matching for Doge vs Bitcoin on Graviex_________");
     const theMarket = "dogebtc";
-    // const increase = "0.000000001"; // The most allowed increase in overlap
     const volume = "33"; // The volume you wish to trade with
     // Check Autradex Orders
     makeApiRequest({ ...currentConfig, apiUrl: apiUrlWithCurrency })
       .then(res => {
-        console.log("API Response:", res.data);
+        console.log("API Request"); // , res.data);
 
         if (res.data && res.data.asks && res.data.asks.length > 0) {
           const sellAsk = res.data.asks.find(ask => ask.side && ask.side.toLowerCase() === 'sell');
@@ -65,11 +64,11 @@ apiConfigs.forEach(config => {
               const sellingGrav = parseFloat(res2.asks[0].price);
               const buyingGrav = parseFloat(res2.bids[0].price);
 
-              console.log("[Graviex Center Orders]");
+              console.log("[Graviex Inside Orders]");
               console.log("Graviex Selling At: " + sellingGrav.toFixed(9));
               console.log("Graviex Buying At: " + buyingGrav.toFixed(9));
 
-              // Check if those orders are ours
+              // Check if those orders are ours - ToDo
               let oursSell = false;
               let oursBuy = false;
 
@@ -100,14 +99,14 @@ apiConfigs.forEach(config => {
                     makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
                       .then(res5 => {
                         if (!res5.error) {
-                          console.log("Buy Order Created:", res5.data);
+                          console.log("Buy Order Created");
                           //console.log(res5.id + "|" + res5.state + "|" + res5.side);
                         } else {
                           console.log(res5)
                         }
                       });
               } else {
-                console.log("Autradex Buy Is Less Than Graviex Sell - Doing nothing on this side");
+                console.log("Buy orders are equal - Doing nothing on this side");
               }
 
               // Lets match the selling price at Autradex with Graviex
@@ -119,18 +118,18 @@ apiConfigs.forEach(config => {
                 makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: sellOrderData })
                   .then(res6 => {
                     if (!res6.error) {
-                          console.log("Sell Order Created:", res6.data);
+                          console.log("Sell Order Created");
                           //console.log(res6.id + "|" + res6.state + "|" + res6.side);
                     } else {
                       console.log(res6)
                     }
                   });
               } else {
-                console.log("Graviex Buy Is Less Than Autradex Sell - Doing nothing on this side");
+                console.log("Sell orders are equal - Doing nothing on this side");
               }
             } else {
               console.log(res2);
-              console.log("Arb detection loop complete");
+              console.log("Matching detection loop complete");
             }
           });
         }
