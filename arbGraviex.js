@@ -1,20 +1,8 @@
-// Arb Bot for Dgoe BTC - Autradex new API and Graviex Old API - Warning!!! Repeats buys 6 times
+// Arb Bot for Graviex - Autradex API and Graviex API - Warning!!! Repeats buys 6 times
 const makeApiRequest = require('./apiRequest');
 const apiConfigs = require('./apiConfigs');
 const apiUrls = require('./apiUrls');
 const graviex = require("./graviex.js");
-// const autradex = require("./autradex.js"); // Import autradex module if not already imported
-
-const {
-  dogeBtcAutxAccessKey,
-  dogeBtcAutxSecretKey,
-  dogeBtcGravAccessKey,
-  dogeBtcGravSecretKey,
-  dogeBtcArbLoop,
-  dogeBtcArbMarket,
-  dogeBtcArbSpread,
-  dogeBtcArbVol
-} = require('./config.json');
 
 // Config Access Keys
 const apiKey = '';
@@ -25,11 +13,10 @@ graviex.accessKey = '';
 graviex.secretKey = '';
 
 // Loop Time in Seconds
-const loop = 30;
+const loop = 1 * 60; // 1 * 60 is 1 Minute
 
 // Iterate over the API configurations and make requests
 apiConfigs.forEach(config => {
-  // You can override apiKey and secret if needed for a specific config
   const apiUrlWithCurrency = apiUrls.getMarket.replace('this', 'dogebtc');
   const currentConfig = {
     ...config,
@@ -39,7 +26,7 @@ apiConfigs.forEach(config => {
 
   // Config Market
   setInterval(function () {
-    console.log("_________Beginning Arb Discovery for Doge vs Bitcoin_________");
+    console.log("_________Beginning Arb Discovery Against Graviex_________");
     const theMarket = "dogebtc";
     const increase = "0.000000001"; // The most allowed increase in overlap
     const volume = "33"; // The volume you wish to trade with
@@ -65,11 +52,11 @@ apiConfigs.forEach(config => {
               const sellingGrav = parseFloat(res2.asks[0].price);
               const buyingGrav = parseFloat(res2.bids[0].price);
 
-              console.log("[Graviex Center Orders]");
+              console.log("[Graviex Inside Orders]");
               console.log("Graviex Selling At: " + sellingGrav.toFixed(9));
               console.log("Graviex Buying At: " + buyingGrav.toFixed(9));
 
-              // Check if those orders are ours
+              // Check if those orders are ours - ToDo
               let oursSell = false;
               let oursBuy = false;
 
@@ -89,6 +76,7 @@ apiConfigs.forEach(config => {
               const sellPriceAutx = buyingGrav.toFixed(9);
               const buyPriceGrav = sellingAutx.toFixed(9);
               const sellPriceGrav = buyingAutx.toFixed(9);
+
               // If Autradex buy is greater than Graviex sell
               if ((buyingAutx - increase) > sellingGrav) {
                 console.log("Orders Have Arb Opportunity");
@@ -101,9 +89,7 @@ apiConfigs.forEach(config => {
                     makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
                       .then(res5 => {
                         if (!res5.error) {
-                          console.log("Sell Order Created:", res5.data);
-                          console.log(res4.id + "|" + res4.state + "|" + res4.side);
-                          console.log(res5.id + "|" + res5.state + "|" + res5.side);
+                          console.log("Arb Complete!");
                         } else {
                           console.log(res5)
                         }
@@ -128,8 +114,7 @@ apiConfigs.forEach(config => {
                       // Sell To Graviex
                       graviex.createOrder(theMarket, "sell", volume, buyingGrav, function (res7) {
                         if (!res7.error) {
-                          console.log(res6.id + "|" + res6.state + "|" + res6.side);
-                          console.log(res7.id + "|" + res7.state + "|" + res7.side);
+                          console.log("Arb Complete");
                         } else {
                           console.log(res7)
                         }
@@ -153,5 +138,4 @@ apiConfigs.forEach(config => {
       });
   }, loop * 1000);
 
-  // Add the missing ')' here
 }, loop * 1000);

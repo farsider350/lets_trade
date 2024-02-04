@@ -3,7 +3,6 @@ const makeApiRequest = require('./apiRequest');
 const apiConfigs = require('./apiConfigs');
 const apiUrls = require('./apiUrls');
 const graviex = require("./graviex.js");
-// const autradex = require("./autradex.js"); // Import autradex module if not already imported
 
 const {
   dogeBtcAutxAccessKey,
@@ -29,7 +28,6 @@ const loop = 120;
 
 // Iterate over the API configurations and make requests
 apiConfigs.forEach(config => {
-  // You can override apiKey and secret if needed for a specific config
   const apiUrlWithCurrency = apiUrls.getMarket.replace('this', 'dogebtc');
   const currentConfig = {
     ...config,
@@ -100,7 +98,6 @@ apiConfigs.forEach(config => {
                       .then(res5 => {
                         if (!res5.error) {
                           console.log("Buy Order Created");
-                          //console.log(res5.id + "|" + res5.state + "|" + res5.side);
                         } else {
                           console.log(res5)
                         }
@@ -119,7 +116,6 @@ apiConfigs.forEach(config => {
                   .then(res6 => {
                     if (!res6.error) {
                           console.log("Sell Order Created");
-                          //console.log(res6.id + "|" + res6.state + "|" + res6.side);
                     } else {
                       console.log(res6)
                     }
@@ -139,5 +135,4 @@ apiConfigs.forEach(config => {
       });
   }, loop * 1000);
 
-  // Add the missing ')' here
 }, loop * 1000);

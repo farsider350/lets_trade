@@ -21,17 +21,15 @@ apiConfigs.forEach(config => {
   // BOT TEST
     console.log("Market Maker Bot Live");
   setInterval(function () {
-    console.log("_________________________________________________________");
+    console.log("_________________________Market Making________________________________");
 
   let oursSell = false;
   let oursBuy = false;
 
   makeApiRequest({ ...currentConfig, apiUrl: apiUrlWithCurrency })
     .then(res => {
-      // console.log("API Response:", res.data);
 
       if (res.data && res.data.asks && res.data.asks.length > 0) {
-        // Find the first 'sell' ask
         const sellAsk = res.data.asks.find(ask => ask.side && ask.side.toLowerCase() === 'sell');
         const buyAsk = res.data.bids.find(ask => ask.side && ask.side.toLowerCase() === 'buy');
 
@@ -82,9 +80,8 @@ apiConfigs.forEach(config => {
                   // Create new sell order
                   makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: buyOrderData })
                     .then(res => {
-                      // console.log("API Request Response:", res.data);
                       if (!res.error) {
-                        console.log("Sell Order Created:", res.data);
+                        console.log("Sell Order Created");
                       }
                     })
                     .catch(error => {
@@ -95,7 +92,7 @@ apiConfigs.forEach(config => {
                   makeApiRequest({ ...currentConfig, apiUrl: apiUrls.createOrder, method: 'post', data: sellOrderData })
                     .then(res => {
                       if (!res.error) {
-                        console.log("Buy Order Created:", res.data);
+                        console.log("Buy Order Created");
                       }
                     })
                     .catch(error => {
